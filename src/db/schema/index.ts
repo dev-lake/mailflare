@@ -219,6 +219,7 @@ export const messages = sqliteTable(
 		toAddr: text("to_addr").notNull(),
 		ccAddr: text("cc_addr"),
 		bccAddr: text("bcc_addr"),
+		replyToAddr: text("reply_to_addr"),
 		subject: text("subject"),
 		snippet: text("snippet"),
 		textBody: text("text_body"),

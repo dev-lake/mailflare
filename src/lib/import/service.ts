@@ -79,6 +79,7 @@ async function importMessageToMailbox(
 		fromAddr,
 		toAddr,
 		ccAddr: parsed.ccAddr,
+		replyToAddr: parsed.replyToAddr,
 		subject: parsed.subject,
 		snippet: buildSnippet(parsed.text, parsed.html),
 		textBody: parsed.text,

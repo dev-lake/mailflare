@@ -194,7 +194,8 @@ export function getReplyRecipients(
     return { to, cc };
   }
 
-  const to = unique([message.fromAddr]);
+  const replyTo = splitEmailAddressList(message.replyToAddr);
+  const to = unique(replyTo.length ? replyTo : [message.fromAddr]);
   if (mode !== "replyAll") return { to, cc: [] };
   const cc = unique([...splitEmailAddressList(message.toAddr), ...splitEmailAddressList(message.ccAddr)]);
   return { to, cc };
