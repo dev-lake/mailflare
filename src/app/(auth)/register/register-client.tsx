@@ -89,7 +89,7 @@ export function RegisterClient() {
       return;
     }
     setSetupDomain(data.domain.hostname);
-    setSetupEnableSending(usedCachedCheck ? enableSending : true);
+    setSetupEnableSending(usedCachedCheck ? enableSending : false);
     setStep(3);
   }
 
@@ -109,7 +109,7 @@ export function RegisterClient() {
     }
 
     setDomainCheck(data.domain);
-    setEnableSending(true);
+    setEnableSending(false);
   }
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {

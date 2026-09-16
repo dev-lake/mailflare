@@ -2,6 +2,7 @@ import { and, asc, eq } from "drizzle-orm";
 import { getDb } from "@/db";
 import { domains, mailboxes, users } from "@/db/schema";
 import { formatEmailAddress } from "@/lib/email/address";
+import { sendOutboundEmail } from "@/lib/email/transport";
 import type { SystemMailInput } from "@/lib/email/system-mail-types";
 
 /**
@@ -17,7 +18,7 @@ export async function sendSystemEmail(env: CloudflareEnv, input: SystemMailInput
 	const sender = await pickSystemSender(env);
 	if (!sender) return false;
 
-	await env.EMAIL.send({
+	await sendOutboundEmail(env, {
 		from: formatEmailAddress(sender.address, sender.name),
 		to: input.to,
 		subject: input.subject,
@@ -43,7 +44,11 @@ export async function pickSystemSender(env: CloudflareEnv): Promise<{ address: s
 		.from(mailboxes)
 		.innerJoin(domains, eq(mailboxes.domainId, domains.id))
 		.innerJoin(users, eq(mailboxes.userId, users.id))
-		.where(and(eq(domains.sendingEnabled, true), eq(mailboxes.disabled, false), eq(users.disabled, false)))
+		.where(and(
+			env.RESEND_API_KEY?.trim() ? eq(domains.routingEnabled, true) : eq(domains.sendingEnabled, true),
+			eq(mailboxes.disabled, false),
+			eq(users.disabled, false),
+		))
 		.orderBy(asc(mailboxes.createdAt))
 		.limit(50);
 	const chosen = rows.find((row) => row.role === "admin") ?? rows[0];

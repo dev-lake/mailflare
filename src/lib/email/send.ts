@@ -11,6 +11,7 @@ import { formatMessageIdHeader, normalizeMessageId, parseMessageIdList } from "@
 import { createAuditLog } from "@/lib/mailboxes/audit";
 import { loadMessageAttachmentContents, storeMessageAttachments, validateAttachments } from "@/lib/email/attachments";
 import type { AttachmentContent } from "@/lib/email/attachment-types";
+import { sendOutboundEmail } from "@/lib/email/transport";
 
 export type SendEmailInput = {
 	userId: string;
@@ -169,7 +170,7 @@ async function deliverEmail(env: CloudflareEnv, delivery: PreparedDelivery): Pro
 	const db = getDb(env);
 	const toAddr = joinEmailAddressList(to);
 	try {
-		const response = await env.EMAIL.send({
+		const response = await sendOutboundEmail(env, {
 			from,
 			to,
 			...(cc.length ? { cc } : {}),
@@ -194,7 +195,7 @@ async function deliverEmail(env: CloudflareEnv, delivery: PreparedDelivery): Pro
 							disposition: "attachment" as const,
 						},
 			),
-		});
+		}, `mailflare/${jobId}`);
 
 		// A fresh message starts its own conversation; Cloudflare's Message-ID is what
 		// any reply will name in In-Reply-To, so key the thread by it.

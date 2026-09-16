@@ -1,9 +1,11 @@
-import bcrypt from "bcryptjs";
+import { hashCredential, verifyCredential } from "@/lib/auth/credential-hash";
+
+const PURPOSE = "mailflare-password-v1";
 
 export function hashPassword(password: string): string {
-	return bcrypt.hashSync(password, 12);
+	return hashCredential(password, PURPOSE);
 }
 
 export function verifyPassword(password: string, hash: string): boolean {
-	return bcrypt.compareSync(password, hash);
+	return verifyCredential(password, hash, PURPOSE);
 }

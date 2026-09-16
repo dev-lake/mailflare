@@ -1,18 +1,19 @@
-import bcrypt from "bcryptjs";
+import { hashCredential, verifyCredential } from "@/lib/auth/credential-hash";
 import { newId } from "@/lib/ids";
 
 const KEY_PREFIX = "ep_";
+const PURPOSE = "mailflare-api-key-v1";
 
 export function generateApiKey(): { fullKey: string; prefix: string; hash: string } {
 	const secret = newId();
 	const fullKey = `${KEY_PREFIX}${secret}`;
 	const prefix = fullKey.slice(0, 12);
-	const hash = bcrypt.hashSync(fullKey, 10);
+	const hash = hashCredential(fullKey, PURPOSE);
 	return { fullKey, prefix, hash };
 }
 
 export function verifyApiKey(fullKey: string, hash: string): boolean {
-	return bcrypt.compareSync(fullKey, hash);
+	return verifyCredential(fullKey, hash, PURPOSE);
 }
 
 export function parseScopes(scopesJson: string): string[] {

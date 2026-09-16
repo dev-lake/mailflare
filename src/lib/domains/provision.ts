@@ -37,7 +37,7 @@ export async function provisionDomainOnCloudflare(
 			zone: { id: MANUAL_ZONE_ID, name: normalized },
 			// Mail arrives whenever MX points at this server, so the domain is live at once.
 			routingEnabled: options?.enableRouting ?? true,
-			sendingRequested: options?.enableSending ?? true,
+			sendingRequested: options?.enableSending ?? false,
 			sendingEnabled: false,
 			sendingSubdomainTag: null,
 			routingStatus: "manual",
@@ -52,7 +52,7 @@ export async function provisionDomainOnCloudflare(
 	}
 
 	const enableRouting = options?.enableRouting ?? true;
-	const enableSending = options?.enableSending ?? true;
+	const enableSending = options?.enableSending ?? false;
 
 	let routingEnabled = false;
 	let sendingEnabled = false;
