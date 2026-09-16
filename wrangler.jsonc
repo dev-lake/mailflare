@@ -2,7 +2,7 @@
 	"$schema": "node_modules/wrangler/config-schema.json",
 	"name": "mailflare",
 	"main": "./worker.ts",
-	"compatibility_date": "2026-05-20",
+	"compatibility_date": "2026-09-16",
 	"keep_vars": true,
 	"compatibility_flags": [
 		"nodejs_compat",
@@ -19,6 +19,15 @@
 		{
 			"binding": "WORKER_SELF_REFERENCE",
 			"service": "mailflare",
+		},
+	],
+	"vars": {
+		"CF_EMAIL_WORKER_NAME": "mailflare",
+	},
+	"routes": [
+		{
+			"pattern": "mail.robobaseai.com",
+			"custom_domain": true,
 		},
 	],
 	"durable_objects": {
@@ -57,13 +66,14 @@
 	"send_email": [
 		{
 			"name": "EMAIL",
-			"remote": false,
+			"remote": true,
 		},
 	],
 	"d1_databases": [
 		{
 			"binding": "DB",
 			"database_name": "mailflare",
+			"database_id": "10dab711-151a-43f1-8b19-23e76172c45a",
 			"migrations_dir": "drizzle/migrations",
 		},
 	],
